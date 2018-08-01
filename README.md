@@ -1,15 +1,19 @@
 # Capture Console
 
-_NOTE_: This project is forked from Randy Carver's [capture-stdout](https://github.com/BlueOtterSoftware/capture-stdout).
-Many thanks to him and the others who helped that make that project exist. I forked it because I had more specialized
-needs, but might one day want to merge the fork back in.
+[![Build Status](https://travis-ci.org/aoberoi/capture-console.svg?branch=master)](https://travis-ci.org/aoberoi/capture-console)
 
 This is a utility, mostly used for testing, to capture string data written to both the stdout and stderr streams in
 Node.js applications.
 
+_NOTE_: This project is forked from Randy Carver's [capture-stdout](https://github.com/BlueOtterSoftware/capture-stdout).
+Many thanks to him and the others who helped that make that project exist. I forked it because I had more specialized
+needs, but might one day want to merge the fork back in.
+
 ## Installation
 
+```
 npm install @aoberoi/capture-console
+```
 
 ## Usage
 
@@ -65,10 +69,6 @@ it('should warn when the value is less than 5', function() {
   assert.equal(output.length, 1);
 });
 ```
-
-### Constructor
-
-`new CaptureConsole()`
 
 ### Methods
 
