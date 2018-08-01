@@ -1,67 +1,96 @@
-# Capture Stdout
-[![Build Status](https://travis-ci.org/BlueOtterSoftware/capture-stdout.svg?branch=master)](https://travis-ci.org/BlueOtterSoftware/capture-stdout)
+# Capture Console
 
-Capture Stdout is a small, efficient ES6 class that captures (they will not end up on stdout) all stdout calls and stores the calls as an array of strings.   Very useful for confirming expected output behavior during tests.  It is usable out of the box in any Node 8.x environment without transpilers or other dependencies.
+_NOTE_: This project is forked from Randy Carver's [capture-stdout](https://github.com/BlueOtterSoftware/capture-stdout).
+Many thanks to him and the others who helped that make that project exist. I forked it because I had more specialized
+needs, but might one day want to merge the fork back in.
 
-## Usage
-
-```
-  it('should error and log an error message if the persistence call throws an error', async () => {
-    const captureStdout = new CaptureStdout();
-    const msg = 'some error text here';
-
-    // stub out the persistence call
-    const findAll = sandbox.stub(orm.books, 'findAll');
-    // stubbed persistence call is a promise, fail as one.
-    findAll.rejects(Error(msg));
-
-    captureStdout.startCapture();
-
-    controller.getAll(req, res, next);
-    await res;
-    await next;
-
-    captureStdout.stopCapture();
-    const arrJson = captureStdout.getCapturedText().map(JSON.parse);
-    captureStdout.clearCaptureText();
-
-    expect(arrJson).has.lengthOf(1);
-    expect(arrJson[0]).has.property('msg').contains(msg);
-    expect(arrJson[0]).has.property('level').which.equals(50);
-  });
-```
-
-### Constructor
-new CaptureStdout()
-### Methods
-#### clearCaptureText()
-Clears all of the captured text
-#### getCapturedText() → {Array} of String
-#### startCapture()
-Starts capturing the writes to process.stdout
-#### stopCapture()
-Stops capturing the writes to process.stdout.
-
-## Motivation
-
-I needed a simple, effective way to include logging of error messages in my tests.   I also didn't want to pollute the running test output.
+This is a utility, mostly used for testing, to capture string data written to both the stdout and stderr streams in
+Node.js applications.
 
 ## Installation
 
-npm install capture-stdout
+npm install @aoberoi/capture-console
 
-## Bugs
+## Usage
 
-See https://github.com/BlueOtterSoftware/capture-stdout
+```javascript
+const { CaptureConsole } = require('@aoberoi/capture-console');
 
-## License
+// Consider testing this function...
+function withMinOfFive(x) {
+  if (x < 5) {
+    console.warn('rounding up to 5');
+    return 5;
+  } else {
+    console.log('already more than 5');
+    return x;
+  }
+}
 
-The MIT License (MIT)
+// Let's pretend the logging behavior is very meaningful, and you want to verify it
+it('should log when the value is already greater than 5', function() {
+  // Start capturing
+  const captureConsole = new CaptureConsole();
+  captureConsole.startCapture();
 
-Copyright (c) 2017 Blue Otter Software
+  // invoke the function
+  const result = withMinOfFive(10);
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  // Stop capturing and read the output
+  captureStdout.stopCapture();
+  const output = captureStdout.getCapturedText();
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  assert.equal(result, 10);
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  // Verify that there's exactly one log line
+  assert.equal(output.length, 1);
+});
+
+// `console.warn()` writes to stderr, but you can use the same methods to find that output as well
+it('should warn when the value is less than 5', function() {
+  // Start capturing
+  const captureConsole = new CaptureConsole();
+  captureConsole.startCapture();
+
+  // invoke the function
+  const result = withMinOfFive(3);
+
+  // Stop capturing and read the output
+  captureStdout.stopCapture();
+  const output = captureStdout.getCapturedText();
+
+  assert.equal(result, 5);
+
+  // Verify that there's exactly one log line
+  assert.equal(output.length, 1);
+});
+```
+
+### Constructor
+
+`new CaptureConsole()`
+
+### Methods
+
+#### startCapture()
+
+Starts capturing the writes to `process.stdout` and `process.stderr`.
+
+#### stopCapture()
+
+Stops capturing the writes to `process.stdout` and `process.stderr`.
+
+#### clearCaptureText()
+
+Clears all of the captured text.
+
+#### getCapturedText() → {Array} of String
+
+Returns all of the captured text.
+
+## Changes since Capture Stdout
+
+*  In addition to capturing stdout, also captures stderr
+*  Exports a namespace instead of a value (better interop with ESM imports)
+*  Made the README more generic
+*  Stated support back to currently active LTS (v6)
