@@ -2,8 +2,6 @@ const mocha = require('mocha');
 const chai = require('chai');
 const { CaptureConsole } = require('../capture-console');
 
-// const logger = require('pino')();
-
 const expect = chai.expect;
 const describe = mocha.describe;
 const it = mocha.it;

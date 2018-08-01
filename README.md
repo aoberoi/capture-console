@@ -94,3 +94,4 @@ Returns all of the captured text.
 *  Exports a namespace instead of a value (better interop with ESM imports)
 *  Made the README more generic
 *  Stated support back to currently active LTS (v6)
+*  Removes `pino` from tests
