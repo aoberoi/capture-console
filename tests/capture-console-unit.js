@@ -22,7 +22,9 @@ describe('CaptureConsole', () => {
   it('should capture messages when startCapture is called', () => {
     const captureConsole = new CaptureConsole();
     const msg1 = 'OMG! It killed Kenny!';
+    const msg1after = 'OMG! It killed Kenny!\n';
     const msg2 = 'The bastard!';
+    const msg2after = 'The bastard!\n';
 
     captureConsole.startCapture();
     console.log(msg1);
@@ -32,8 +34,8 @@ describe('CaptureConsole', () => {
     captureConsole.clearCaptureText();
 
     expect(output).has.lengthOf(2);
-    expect(output[0]).equals(msg1);
-    expect(output[1]).equals(msg2);
+    expect(output[0]).equals(msg1after);
+    expect(output[1]).equals(msg2after);
   });
 
   it('should stop capturing message when stopCapture is called', () => {
@@ -54,9 +56,13 @@ describe('CaptureConsole', () => {
   it('should allow multiple start/stop capturing without clearing capture text', () => {
     const captureConsole = new CaptureConsole();
     const msg1 = 'OMG! It killed Kenny!';
+    const msg1after = 'OMG! It killed Kenny!\n';
     const msg2 = 'The bastard!';
+    const msg2after = 'The bastard!\n';
     const msg3 = 'All your base';
+    const msg3after = 'All your base\n';
     const msg4 = 'Are belong to us!';
+    const msg4after = 'Are belong to us!\n';
 
     captureConsole.startCapture();
     console.info(msg1);
@@ -70,8 +76,7 @@ describe('CaptureConsole', () => {
     captureConsole.clearCaptureText();
 
     expect(output).has.lengthOf(2);
-    expect(output[0]).equals(msg1);
-    expect(output[1]).equals(msg3);
+    expect(output[0]).equals(msg1after);
+    expect(output[1]).equals(msg3after);
   });
 });
-
