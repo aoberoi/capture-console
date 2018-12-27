@@ -38,7 +38,7 @@ class CaptureConsole {
    * @private
    */
   _writeCapture(string) {
-    this._capturedText.push(string.replace(/\n/g, ''));
+    this._capturedText.push(string);
   }
 
   /**
