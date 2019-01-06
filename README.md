@@ -95,3 +95,4 @@ Returns all of the captured text.
 *  Made the README more generic
 *  Stated support back to currently active LTS (v6)
 *  Removes `pino` from tests
+*  Allows newline character in captured output strings
